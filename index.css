@@ -1,7 +1,9 @@
 * {
   box-sizing: border-box;
 }
-
+button{
+  cursor: pointer;
+}
 body {
   margin: 0;
   font-family: "Hanken Grotesk", Arial, sans-serif;
@@ -110,6 +112,14 @@ main {
   padding: 6px;
 }
 
+.keyboard .alphabet.correct{
+  background-color: #10A95B;
+}
+
+.keyboard .alphabet.wrong{
+  background-color: #EC5D49;
+}
+
 button.new-game {
   background-color: #11B5E5;
   border: 1px solid #D7D7D7;
@@ -119,5 +129,4 @@ button.new-game {
   padding: 6px 12px;
   display: block;
   margin-inline: auto;
-  cursor: pointer;
 }
