@@ -4,15 +4,12 @@ import { clsx } from 'clsx';
 export default function App() {
 
   /**
- * Goal: Allow the user to start guessing the letters
- * 
- * Challenge: Update the keyboard when a letter is right
- * or wrong.
- * 
- * Bonus: use the `clsx` package to easily add conditional 
- * classNames to the keys of the keyboard. Check the docs 
- * to learn how to use it 📖
- */
+  * Goal: Allow the user to start guessing the letters
+  * 
+  * Challenge: Only display the correctly-guessed letters
+  * in the word
+  */
+
   const [currentWord, setCurrentWord] = React.useState('react');
   const wordBlocks = Array.from(currentWord).map((letter, index) => {
     return (
@@ -41,7 +38,7 @@ export default function App() {
         className={clsx(
           'alphabet',
           guessed.includes(alpha) &&
-            (currentWord.includes(alpha)
+          (currentWord.includes(alpha)
             ? 'correct'
             : 'wrong')
         )}
