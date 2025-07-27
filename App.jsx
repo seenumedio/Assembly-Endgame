@@ -4,25 +4,59 @@ import { clsx } from 'clsx';
 export default function App() {
 
   /**
-  * Goal: Allow the user to start guessing the letters
-  * 
-  * Challenge: Only display the correctly-guessed letters
-  * in the word
-  */
+   * Backlog:
+   * 
+   * - Farewell messages in status section
+   * - Fix a11y issues
+   * - Make the new game button work
+   * - Choose a random word from a list of words
+   * - Confetti drop when the user wins
+   */
 
+  // state values
+  const [guessed, setGuessed] = React.useState([]);
   const [currentWord, setCurrentWord] = React.useState('react');
+
+  // derived values
+  const wrongGuessCount = guessed.filter(letter => !currentWord.includes(letter)).length;
+  const wonGame = Array.from(currentWord).every(letter => guessed.includes(letter));
+  const lostGame = (wrongGuessCount === 8)
+  const isGameOver = lostGame || wonGame;
+
+  // variables
+  const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+
+  // languages
+  const langElements = languages.map((lang, idx) => {
+
+    return (
+      <span
+        className={clsx('lang-chip', wrongGuessCount > idx && 'lost')}
+        style={{
+          backgroundColor: lang.backgroundColor,
+          color: lang.color,
+        }}
+        key={lang.name}
+      >
+        {lang.name}
+      </span>
+    )
+  });
+
+  // word blocks
   const wordBlocks = Array.from(currentWord).map((letter, index) => {
+    const correct = guessed.includes(letter) && currentWord.includes(letter);
     return (
       <span
         className='word-block'
         key={index}
       >
-        {letter.toUpperCase()}
+        {correct && letter.toUpperCase()}
       </span>)
   });
 
-  const [guessed, setGuessed] = React.useState([]);
-
+  // keyboard
   function handleClick(letter) {
     setGuessed(prevArr => {
       const prevSet = new Set(prevArr);
@@ -31,7 +65,6 @@ export default function App() {
     });
   }
 
-  const alphabet = "abcdefghijklmnopqrstuvwxyz"
   const keyboard = Array.from(alphabet).map(alpha => {
     return (
       <button
@@ -50,22 +83,6 @@ export default function App() {
     )
   })
 
-  const langElements = languages.map(lang => (
-    <span
-      className='lang-chip'
-      style={{
-        backgroundColor: lang.backgroundColor,
-        color: lang.color,
-      }}
-      key={lang.name}
-    >
-      {lang.name}
-    </span>
-  )
-  );
-
-
-
   return (
     <main>
       <header className="header">
@@ -73,9 +90,15 @@ export default function App() {
         <p>Guess the word in under 8 attempts to keep the programming world safe from Assembly!</p>
       </header>
 
-      <section className="status won">
-        <h1>You win!</h1>
-        <h2>Well done! 🎉</h2>
+      <section className={clsx("status", wonGame && 'won', lostGame && 'lost')}>
+        {wonGame && <>
+          <h1>You win!</h1>
+          <h2>Well done! 🎉</h2>
+        </>}
+        {lostGame && <>
+          <h1>Game over!</h1>
+          <h2>You lose! Better start learning Assembly 😭</h2>
+        </>}
       </section>
 
       <section className='lang-container'>
@@ -83,7 +106,7 @@ export default function App() {
       </section>
       <section className='word-blocks'>{wordBlocks}</section>
       <section className='keyboard'>{keyboard}</section>
-      <button className="new-game">New Game</button>
+      {isGameOver && <button className="new-game">New Game</button>}
     </main>
   )
 }

@@ -1,9 +1,11 @@
 * {
   box-sizing: border-box;
 }
-button{
+
+button {
   cursor: pointer;
 }
+
 body {
   margin: 0;
   font-family: "Hanken Grotesk", Arial, sans-serif;
@@ -18,7 +20,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 .header {
@@ -39,23 +41,34 @@ main {
   width: 320px;
 }
 
-.status.won {
+.status {
   font-weight: 500;
   color: #F9F4DA;
-  background-color: #10A95B;
+  height: 75px;
   width: 360px;
-  line-height: 0.8rem;
+  line-height: 0.1rem;
   text-align: center;
   padding: 6px;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.status.won h1 {
+.status h1 {
   font-size: 20px;
 }
 
-.status.won h2 {
+.status h2 {
   font-size: 16px;
+}
+
+.status.won {
+  background-color: #10A95B;
+}
+
+.status.lost{
+  background-color: #BA2A2A;
 }
 
 .lang-container {
@@ -70,6 +83,20 @@ main {
 .lang-container>.lang-chip {
   padding: 4.5px;
   border-radius: 3px;
+  position: relative;
+}
+
+.lang-container>.lang-chip.lost::before {
+  content: "💀";
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background-color: rgb(0, 0, 0, 0.7);
 }
 
 .word-blocks {
@@ -98,7 +125,6 @@ main {
   gap: 8px;
   justify-content: center;
   padding: 28px 0;
-  margin-block: 36px;
 }
 
 .keyboard .alphabet {
@@ -112,11 +138,11 @@ main {
   padding: 6px;
 }
 
-.keyboard .alphabet.correct{
+.keyboard .alphabet.correct {
   background-color: #10A95B;
 }
 
-.keyboard .alphabet.wrong{
+.keyboard .alphabet.wrong {
   background-color: #EC5D49;
 }
 
