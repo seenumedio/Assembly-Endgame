@@ -23,7 +23,7 @@ export default function App() {
 
   // state values
   const [guessed, setGuessed] = React.useState([]);
-  const [currentWord, setCurrentWord] = React.useState('fucked');
+  const [currentWord, setCurrentWord] = React.useState(() => getWord());
 
   // derived values
   const wrongGuessCount = guessed.filter(letter => !currentWord.includes(letter)).length;
