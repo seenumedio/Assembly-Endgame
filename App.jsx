@@ -1,31 +1,29 @@
 import { languages } from './languages'
 import React from 'react';
 import { clsx } from 'clsx';
-import { getFarewellText } from './utils'
+import { getFarewellText, getWord } from './utils'
+import Confetti from 'react-confetti'
 export default function App() {
 
-/**
- * Backlog:
- * 
- * ✅ Farewell messages in status section
- * ✅ Disable the keyboard when the game is over
- * ✅ Fix a11y issues
- * - Choose a random word from a list of words
- * - Make the New Game button reset the game
- * - Confetti drop when the user wins
- * 
- * Challenge: Choose a random word from a list of words
- * 
- * 1. Create a new function in utils.js that chooses a random
- *    word from the imported array of words and returns it
- * 2. import the function into this file
- * 3. Figure out where to use that function.
- */
-
+  /**
+   * Backlog:
+   * 
+   * ✅ Farewell messages in status section
+   * ✅ Disable the keyboard when the game is over
+   * ✅ Fix a11y issues
+   * ✅ Choose a random word from a list of words
+   * ✅ Make the New Game button reset the game
+   * - Reveal what the word was if the user loses the game
+   * - Confetti drop when the user wins
+   * 
+   * Challenge: Reveal the missing letters of the word if the user
+   * loses the game. Style the missing letters to have the same red
+   * color as the wrong letter keys.
+   */
 
   // state values
   const [guessed, setGuessed] = React.useState([]);
-  const [currentWord, setCurrentWord] = React.useState('react');
+  const [currentWord, setCurrentWord] = React.useState('fucked');
 
   // derived values
   const wrongGuessCount = guessed.filter(letter => !currentWord.includes(letter)).length;
@@ -37,6 +35,7 @@ export default function App() {
   const alphabet = "abcdefghijklmnopqrstuvwxyz"
   const lastGuessLetter = guessed[guessed.length - 1];
   const lastGuessRight = currentWord.includes(lastGuessLetter);
+
   // bid farewell to lost langs
   function bidFarewell() {
     return wrongGuessCount > 0
@@ -44,7 +43,6 @@ export default function App() {
       && !isGameOver
       && getFarewellText(languages[wrongGuessCount - 1].name)
   }
-
 
   // languages
   const langElements = languages.map((lang, idx) => {
@@ -66,12 +64,14 @@ export default function App() {
   // word blocks
   const wordBlocks = Array.from(currentWord).map((letter, index) => {
     const correct = guessed.includes(letter) && currentWord.includes(letter);
+    const missingLetter = lostGame && !guessed.includes(letter);
     return (
       <span
-        className='word-block'
+        className={clsx('word-block', missingLetter && 'missing')}
         key={index}
       >
         {correct && letter.toUpperCase()}
+        {missingLetter && letter.toUpperCase()}
       </span>)
   });
 
@@ -105,8 +105,19 @@ export default function App() {
     )
   })
 
+  function resetGame() {
+    setCurrentWord(getWord());
+    setGuessed([]);
+  }
+
+  {/* App */ }
   return (
     <main>
+      {wonGame &&
+        <Confetti
+          recycle = {false}
+          numberOfPieces={1000}
+        />}
       <header className="header">
         <h1>Assembly: Endgame</h1>
         <p>Guess the word in under 8 attempts to keep the programming world safe from Assembly!</p>
@@ -153,7 +164,14 @@ export default function App() {
 
       <section className='keyboard'>{keyboard}</section>
 
-      {isGameOver && <button className="new-game">New Game</button>}
+      {isGameOver &&
+        <button
+          className="new-game"
+          onClick={resetGame}
+        >
+          New Game
+        </button>
+      }
     </main>
   )
 }

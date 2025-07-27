@@ -1,3 +1,10 @@
+import {words} from './words'
+
+export function getWord(){
+    const idx = Math.floor(Math.random()*words.length);
+    return words[idx];
+}
+
 export function getFarewellText(language) {
     const options = [
         `Farewell, ${language}`,

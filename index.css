@@ -126,6 +126,10 @@ main {
   border-bottom: 1px solid #F9F4DA;
 }
 
+.word-block.missing{
+  color: #EC5D49;
+}
+
 .keyboard {
   display: flex;
   max-width: 480px;
