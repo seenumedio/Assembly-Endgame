@@ -111,6 +111,8 @@ main {
   display: flex;
   gap: 2px;
   margin-block: 15px;
+  width: 100%;
+  justify-content: center;
 }
 
 .word-block {
@@ -248,10 +250,10 @@ section.game-status.lost {
 }
 
 @media all and (max-width:700px) {
-  main{
-    padding: 0px;
-  }
   input {
     max-width: 50vw;
+  }
+  .word-block{
+    width: 40px;
   }
 }
