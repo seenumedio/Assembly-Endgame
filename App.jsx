@@ -2,7 +2,7 @@ import Bullet from './Components/Bullet'
 import Heart from './Components/Heart'
 import React from 'react';
 import { clsx } from 'clsx';
-import { getWord } from './utils'
+import { getFarewellText, getWord } from './utils'
 import Confetti from 'react-confetti'
 import { nanoid } from 'nanoid';
 import { motion } from "framer-motion";
@@ -158,8 +158,13 @@ export default function App() {
       <header className="header">
         <h1>FLAMES</h1>
         <p>
-          Want to know the bond btw you and ur comrade?
-          {showGame && "⚠️ Save your comrade's life from danger❗"}
+          {!showGame && 'Want to know the bond btw you and ur comrade?'}
+          {showGame && 
+          <>
+          💡 Guess the word within {names.comrade.length} chances
+          <br />
+          ⚠️ Save your comrade's life from danger❗
+          </>}
         </p>
       </header>
 
@@ -220,7 +225,7 @@ export default function App() {
       {isGameOver && showGame && 
         <section className={clsx('game-status', wonGame && 'won', lostGame && 'lost')}>
           {wonGame && <h2>Congrats!! `{flamesCalc().toUpperCase()}´ is likely your bond</h2>}
-          {lostGame && <h2>Oh NO!! Your bond will remain a mystery!</h2>}
+          {lostGame && <h2>{getFarewellText(names.comrade)}</h2>}
         </section>}
       {self.length && comrade.length ?
         <button
