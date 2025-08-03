@@ -161,7 +161,7 @@ export default function App() {
           {!showGame && 'Want to know the bond btw you and ur comrade?'}
           {showGame && 
           <>
-          💡 Guess the word within {names.comrade.length} chances
+          💡 Guess the word within {names.comrade.length-wrongGuessCount} chances
           <br />
           ⚠️ Save your comrade's life from danger❗
           </>}
