@@ -13,13 +13,11 @@ body {
   color: #D9D9D9;
   height: 100vh;
   width: 100%;
-  display: flex;
   justify-content: center;
 }
 
 main {
   display: flex;
-  justify-self: center;
   flex-direction: column;
   align-items: center;
   padding: 0 20px;
@@ -86,7 +84,7 @@ main {
   height: 80px;
 }
 
-.names-container>div .name-chip{
+.names-container>div .name-chip {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -99,7 +97,9 @@ main {
   border: 1px solid;
   border-radius: 5px;
 }
-.names-container>.self-container, .names-container>.comrade-container{
+
+.names-container>.self-container,
+.names-container>.comrade-container {
   display: flex;
   gap: 5px;
   margin-block: 5px;
@@ -174,8 +174,6 @@ button.new-game {
   padding: 6px 12px;
   display: block;
   margin-inline: auto;
-  position: fixed;
-  bottom: 15px;
 }
 
 .sr-only {
@@ -221,7 +219,7 @@ input#self {
   color: #00AAFF;
 }
 
-input#comrade{
+input#comrade {
   border: 1px solid #F765FF;
   color: #F765FF;
 }
@@ -240,10 +238,20 @@ section.game-status {
   padding: 0 10px;
   text-align: center;
 }
+
 section.game-status.won {
   background-color: #10A95B;
 }
 
 section.game-status.lost {
   background-color: #BA2A2A;
+}
+
+@media all and (max-width:700px) {
+  main{
+    padding: 0px;
+  }
+  input {
+    max-width: 50vw;
+  }
 }
