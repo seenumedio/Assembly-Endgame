@@ -1,34 +1,23 @@
-import { languages } from './languages'
+import Bullet from './Components/Bullet'
+import Heart from './Components/Heart'
 import React from 'react';
 import { clsx } from 'clsx';
 import { getFarewellText, getWord } from './utils'
 import Confetti from 'react-confetti'
+import { nanoid } from 'nanoid';
+import { motion, AnimatePresence } from "framer-motion";
 export default function App() {
-
-  /**
-   * Backlog:
-   * 
-   * ✅ Farewell messages in status section
-   * ✅ Disable the keyboard when the game is over
-   * ✅ Fix a11y issues
-   * ✅ Choose a random word from a list of words
-   * ✅ Make the New Game button reset the game
-   * - Reveal what the word was if the user loses the game
-   * - Confetti drop when the user wins
-   * 
-   * Challenge: Reveal the missing letters of the word if the user
-   * loses the game. Style the missing letters to have the same red
-   * color as the wrong letter keys.
-   */
 
   // state values
   const [guessed, setGuessed] = React.useState([]);
-  const [currentWord, setCurrentWord] = React.useState(() => getWord());
+  const [currentWord, setCurrentWord] = React.useState("love");
+  const [names, setNames] = React.useState({ self: "", comrade: "" });
+  const [showGame, setShowGame] = React.useState(false);
 
   // derived values
   const wrongGuessCount = guessed.filter(letter => !currentWord.includes(letter)).length;
   const wonGame = Array.from(currentWord).every(letter => guessed.includes(letter));
-  const lostGame = (wrongGuessCount >= languages.length - 1)
+  const lostGame = (wrongGuessCount >= names.comrade.length);
   const isGameOver = lostGame || wonGame;
 
   // variables
@@ -36,30 +25,69 @@ export default function App() {
   const lastGuessLetter = guessed[guessed.length - 1];
   const lastGuessRight = currentWord.includes(lastGuessLetter);
 
-  // bid farewell to lost langs
-  function bidFarewell() {
-    return wrongGuessCount > 0
-      && !lastGuessRight
-      && !isGameOver
-      && getFarewellText(languages[wrongGuessCount - 1].name)
+  {/* names */ }
+  function updateNames(e) {
+    const { value, name } = e.target;
+    setNames(prev => ({ ...prev, [name]: value.toUpperCase() }));
   }
+  // name blocks
+  const self = Array.from(names.self).map(letter =>
+    <span
+      className='name-chip'
+      style={{
+        backgroundColor: "#3A658D",
+        borderColor: "#00AAFF",
+      }}
+      key={nanoid()}
+    >
+      {letter.toUpperCase()}
+    </span>
+  )
+  const comrade = Array.from(names.comrade).map((letter, idx) =>
+    <motion.span
+      className='name-chip'
+      style={{
+        backgroundColor: "#9D35A3",
+        borderColor: "#F765FF"
+      }}
+      initial={{ opacity: 1, scale: 1 }}
+      animate={wrongGuessCount > idx
+        ? { opacity: 0, scale: 0 }
+        : { opacity: 1, scale: 1 }
+      }
+      transition={{
+        duration: 0.8,
+        delay: 0.5,
+        ease: [0, 0.71, 0.2, 1.01],
+      }}
+      key={nanoid()}
+    >
+      {letter.toUpperCase()}
+    </motion.span>
+  )
 
-  // languages
-  const langElements = languages.map((lang, idx) => {
-
-    return (
-      <span
-        className={clsx('lang-chip', wrongGuessCount > idx && 'lost')}
-        style={{
-          backgroundColor: lang.backgroundColor,
-          color: lang.color,
-        }}
-        key={lang.name}
-      >
-        {lang.name}
-      </span>
-    )
-  });
+  // flames calc
+  function flamesCalc() {
+    const flames = ['friendship', 'love', 'affection', 'marriage', 'enemies', 'siblings'];
+    const comrade = Array.from(names.comrade);
+    const self = Array.from(names.self).filter(char => {
+      const idx = comrade.indexOf(char);
+      if (idx !== -1) {
+        comrade.splice(idx, 1);
+        return false;
+      }
+      return true;
+    });
+    const count = self.concat(comrade).length;
+    while (flames.length !== 1) {
+      let i = 0;
+      for (let j = count; j > 1; j--) {
+        i = (i + 1) % flames.length;
+      }
+      flames.splice(i, 1);
+    }
+    return flames[0];
+  }
 
   // word blocks
   const wordBlocks = Array.from(currentWord).map((letter, index) => {
@@ -68,10 +96,9 @@ export default function App() {
     return (
       <span
         className={clsx('word-block', missingLetter && 'missing')}
-        key={index}
+        key={nanoid()}
       >
         {correct && letter.toUpperCase()}
-        {missingLetter && letter.toUpperCase()}
       </span>)
   });
 
@@ -105,45 +132,73 @@ export default function App() {
     )
   })
 
+  // enterBtn
+  function handleEnter() {
+    setShowGame(true);
+    setCurrentWord(getWord(flamesCalc()));
+    return true;
+  }
+
   function resetGame() {
-    setCurrentWord(getWord());
     setGuessed([]);
+    setNames({ self: "", comrade: "" });
+    setShowGame(false);
   }
 
   {/* App */ }
   return (
     <main>
-      {wonGame &&
+      {wonGame && currentWord !== "" &&
+        <>
         <Confetti
-          recycle = {false}
+          recycle={false}
           numberOfPieces={1000}
-        />}
+        />
+        <Heart flames={flamesCalc()} />
+        </>}
       <header className="header">
-        <h1>Assembly: Endgame</h1>
-        <p>Guess the word in under 8 attempts to keep the programming world safe from Assembly!</p>
+        <h1>FLAMES</h1>
+        <p>
+          Want to know the bond btw you and ur comrade?
+          {showGame && "Save your comrade's life from danger!"}
+        </p>
       </header>
 
-      <section
-        className={clsx("status", wonGame && 'won', lostGame && 'lost', bidFarewell() && 'lost-lang')}
-        aria-live='polite'
-        role='status'
-      >
-        {bidFarewell() && <p>{bidFarewell()}</p>}
-        {wonGame && <>
-          <h1>You win!</h1>
-          <h2>Well done! 🎉</h2>
-        </>}
-        {lostGame && <>
-          <h1>Game over!</h1>
-          <h2>You lose! Better start learning Assembly 😭</h2>
-        </>}
+      <section>
+        <label className='self'>Your Name:
+          <input
+            type="text"
+            id='self'
+            name='self'
+            onChange={updateNames}
+            value={names.self}
+            maxLength={12}
+            disabled={showGame}
+          />
+        </label>
+        <label className='comrade'>Your Comrade's:
+          <input
+            type="text"
+            id='comrade'
+            name='comrade'
+            onChange={updateNames}
+            value={names.comrade}
+            maxLength={12}
+            disabled={showGame}
+          />
+        </label>
       </section>
 
-      <section className='lang-container'>
-        {langElements}
+      <section className='names-container'>
+        <div
+          className='self-container'
+        >{self}
+        </div>
+        <div className='comrade-container'>{showGame && !isGameOver ? <Bullet comrade={comrade} /> : comrade}</div>
       </section>
+      
 
-      <section className='word-blocks'>{wordBlocks}</section>
+      {showGame && <section className='word-blocks'>{wordBlocks}</section>}
 
       {/* for sr-only */}
       <section
@@ -162,16 +217,16 @@ export default function App() {
         </p>
       </section>
 
-      <section className='keyboard'>{keyboard}</section>
+      {showGame && !isGameOver && <section className='keyboard'>{keyboard}</section>}
 
-      {isGameOver &&
+      {self.length && comrade.length ?
         <button
           className="new-game"
-          onClick={resetGame}
+          disabled = {showGame&&!isGameOver}
+          onClick={isGameOver ? resetGame : handleEnter}
         >
-          New Game
-        </button>
-      }
+          {isGameOver ? 'Reset' : 'Enter'}
+        </button> : null}
     </main>
   )
 }
