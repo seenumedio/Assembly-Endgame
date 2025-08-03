@@ -223,3 +223,25 @@ input#comrade{
   border: 1px solid #F765FF;
   color: #F765FF;
 }
+
+section.game-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #F9F4DA;
+  width: 100%;
+  max-width: 420px;
+  min-height: 60px;
+  border-radius: 4px;
+  margin-block: 30px;
+  padding: 0 10px;
+  text-align: center;
+}
+section.game-status.won {
+  background-color: #10A95B;
+}
+
+section.game-status.lost {
+  background-color: #BA2A2A;
+}

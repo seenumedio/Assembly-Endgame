@@ -2,10 +2,10 @@ import Bullet from './Components/Bullet'
 import Heart from './Components/Heart'
 import React from 'react';
 import { clsx } from 'clsx';
-import { getFarewellText, getWord } from './utils'
+import { getWord } from './utils'
 import Confetti from 'react-confetti'
 import { nanoid } from 'nanoid';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 export default function App() {
 
   // state values
@@ -43,28 +43,27 @@ export default function App() {
       {letter.toUpperCase()}
     </span>
   )
-  const comrade = Array.from(names.comrade).map((letter, idx) =>
-    <motion.span
+  const comrade = Array.from(names.comrade).map((letter, idx) =>{
+    const isPopped = !wonGame && wrongGuessCount > idx;    return <motion.span
       className='name-chip'
       style={{
         backgroundColor: "#9D35A3",
         borderColor: "#F765FF"
       }}
       initial={{ opacity: 1, scale: 1 }}
-      animate={wrongGuessCount > idx
-        ? { opacity: 0, scale: 0 }
-        : { opacity: 1, scale: 1 }
-      }
+      animate={{
+        opacity: isPopped ? 0 : 1,
+        scale: isPopped ? 0 : 1
+      }}
       transition={{
-        duration: 0.8,
-        delay: 0.5,
-        ease: [0, 0.71, 0.2, 1.01],
+        duration: 0.5,
+        ease: "easeOut"
       }}
       key={nanoid()}
     >
       {letter.toUpperCase()}
     </motion.span>
-  )
+})
 
   // flames calc
   function flamesCalc() {
@@ -150,17 +149,17 @@ export default function App() {
     <main>
       {wonGame && currentWord !== "" &&
         <>
-        <Confetti
-          recycle={false}
-          numberOfPieces={1000}
-        />
-        <Heart flames={flamesCalc()} />
+          <Confetti
+            recycle={false}
+            numberOfPieces={1000}
+          />
+          <Heart flames={flamesCalc()} />
         </>}
       <header className="header">
         <h1>FLAMES</h1>
         <p>
           Want to know the bond btw you and ur comrade?
-          {showGame && "Save your comrade's life from danger!"}
+          {showGame && "⚠️ Save your comrade's life from danger❗"}
         </p>
       </header>
 
@@ -196,7 +195,7 @@ export default function App() {
         </div>
         <div className='comrade-container'>{showGame && !isGameOver ? <Bullet comrade={comrade} /> : comrade}</div>
       </section>
-      
+
 
       {showGame && <section className='word-blocks'>{wordBlocks}</section>}
 
@@ -218,11 +217,15 @@ export default function App() {
       </section>
 
       {showGame && !isGameOver && <section className='keyboard'>{keyboard}</section>}
-
+      {isGameOver && showGame && 
+        <section className={clsx('game-status', wonGame && 'won', lostGame && 'lost')}>
+          {wonGame && <h2>Congrats!! `{flamesCalc().toUpperCase()}´ is likely your bond</h2>}
+          {lostGame && <h2>Oh NO!! Your bond will remain a mystery!</h2>}
+        </section>}
       {self.length && comrade.length ?
         <button
           className="new-game"
-          disabled = {showGame&&!isGameOver}
+          disabled={showGame && !isGameOver}
           onClick={isGameOver ? resetGame : handleEnter}
         >
           {isGameOver ? 'Reset' : 'Enter'}
