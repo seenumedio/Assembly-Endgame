@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import gunImg from "../src/assets/LaserGun.webp";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Bullet = ({ direction }) => {
@@ -63,7 +64,7 @@ export default function BulletShooter({ comrade }) {
     >
       {/* Right gun */}
       <div style={{ position: "relative", marginTop: "15px" }}>
-        <img src="/src/assets/LaserGun.webp" alt="gun" height="40px" />
+        <img src={gunImg} alt="gun" height="40px" />
       </div>
 
       {/* Word */}
@@ -76,7 +77,7 @@ export default function BulletShooter({ comrade }) {
 
       {/* Left gun */}
       <div style={{ transform: "scaleX(-1)", position: "relative", marginTop: "15px" }}>
-        <img src="/src/assets/LaserGun.webp" alt="gun" height="40px" />
+        <img src={gunImg} alt="gun" height="40px" />
       </div>
 
       {/* Bullets Layer */}
