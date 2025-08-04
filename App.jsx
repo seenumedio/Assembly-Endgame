@@ -1,5 +1,6 @@
 import Bullet from './Components/Bullet'
 import Heart from './Components/Heart'
+import Timer from './Components/Timer'
 import React from 'react';
 import { clsx } from 'clsx';
 import { getFarewellText, getWord } from './utils'
@@ -17,7 +18,7 @@ export default function App() {
   // derived values
   const wrongGuessCount = guessed.filter(letter => !currentWord.includes(letter)).length;
   const wonGame = Array.from(currentWord).every(letter => guessed.includes(letter));
-  const lostGame = (wrongGuessCount >= names.comrade.length);
+  const lostGame = (wrongGuessCount >= names.comrade.length)|| currentWord === 'fail';
   const isGameOver = lostGame || wonGame;
 
   // variables
@@ -43,8 +44,8 @@ export default function App() {
       {letter.toUpperCase()}
     </span>
   )
-  const comrade = Array.from(names.comrade).map((letter, idx) =>{
-    const isPopped = !wonGame && wrongGuessCount > idx;    return <motion.span
+  const comrade = Array.from(names.comrade).map((letter, idx) => {
+    const isPopped = !wonGame && wrongGuessCount > idx; return <motion.span
       className='name-chip'
       style={{
         backgroundColor: "#9D35A3",
@@ -63,7 +64,7 @@ export default function App() {
     >
       {letter.toUpperCase()}
     </motion.span>
-})
+  })
 
   // flames calc
   function flamesCalc() {
@@ -140,6 +141,7 @@ export default function App() {
 
   function resetGame() {
     setGuessed([]);
+    setCurrentWord("love");
     setNames({ self: "", comrade: "" });
     setShowGame(false);
   }
@@ -156,15 +158,18 @@ export default function App() {
           <Heart flames={flamesCalc()} />
         </>}
       <header className="header">
-        <h1>FLAMES</h1>
+        <div>
+          <h1>FLAMES</h1>
+          {!isGameOver && showGame && <Timer setCurrentWord = {setCurrentWord} currentWord = {currentWord} />}
+        </div>
         <p>
           {!showGame && 'Want to know the bond btw you and ur comrade?'}
-          {showGame && 
-          <>
-          💡 Guess the word within {names.comrade.length-wrongGuessCount} chances
-          <br />
-          ⚠️ Save your comrade's life from danger❗
-          </>}
+          {showGame &&
+            <>
+              💡 Guess the word within {names.comrade.length - wrongGuessCount} chances
+              <br />
+              ⚠️ Save your comrade's life from danger❗
+            </>}
         </p>
       </header>
 
@@ -222,7 +227,7 @@ export default function App() {
       </section>
 
       {showGame && !isGameOver && <section className='keyboard'>{keyboard}</section>}
-      {isGameOver && showGame && 
+      {isGameOver && showGame &&
         <section className={clsx('game-status', wonGame && 'won', lostGame && 'lost')}>
           {wonGame && <h2>Congrats!! `{flamesCalc().toUpperCase()}´ is likely your bond</h2>}
           {lostGame && <h2>{getFarewellText(names.comrade)}</h2>}
